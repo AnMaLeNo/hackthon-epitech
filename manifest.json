@@ -4,8 +4,15 @@
   "version": "1.0",
   "description": "A sleek and premium timeboxing task manager to keep your sessions focused.",
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ],
+  "host_permissions": [
+    "http://localhost:8080/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html"
   }
