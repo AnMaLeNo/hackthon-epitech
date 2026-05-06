@@ -4,7 +4,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Installation des dépendances tierces sans allocation de cache
-RUN pip install --no-cache-dir fastapi uvicorn pydantic
+RUN pip install --no-cache-dir fastapi uvicorn pydantic openai
 
 # Copier le script serveur dans le conteneur
 COPY test-server.py .
