@@ -123,12 +123,10 @@ async def handle_request(
     url_str = str(url)
     logger.info(f"name={name} | tâche={tâche} | url={url_str}")
 
-    # Cas spécial : accueil YouTube → distraction directe, pas besoin de scraper
+    # Cas spécial : accueil YouTube → navigation en cours, on laisse passer
     if url_str.rstrip("/") in ("https://www.youtube.com", "http://www.youtube.com"):
-        logger.info("Accueil YouTube → distraction directe")
-        clash = engueuler_freaky(tâche, "Page d'accueil YouTube", name)
-        envoyer_discord(clash)
-        return {"status": "distraction_detectee", "action": "discord_notified"}
+        logger.info("Accueil YouTube → navigation, pas de jugement.")
+        return {"status": "utile"}
 
     # Récupération des infos du site (titre/desc YouTube ou URL brute)
     info_site = recup_infos(url_str)
