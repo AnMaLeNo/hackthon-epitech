@@ -379,3 +379,17 @@ input:checked + .slider:before {
 .domain-item:hover {
   background: rgba(0, 0, 0, 0.3);
 }
+
+/* Profile / User Name */
+.profile-container {
+  margin-bottom: 24px;
+}
+
+.name-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.name-input-wrapper input {
+  flex: 1;
+}

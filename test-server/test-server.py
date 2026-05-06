@@ -28,9 +28,11 @@ app.add_middleware(
 
 @app.get("/process")
 async def handle_request(
+    name: str = Query(..., description="Nom de l'utilisateur"),
     tâche: str = Query(..., description="Identifiant de la tâche au format string"),
     url: HttpUrl = Query(..., description="URL valide conforme à la syntaxe RFC 3986")
 ):
+    logger.info(f"Paramètre 'name' extrait : {name}")
     logger.info(f"Paramètre 'tâche' extrait : {tâche}")
     logger.info(f"Paramètre 'url' extrait : {str(url)}")
 

@@ -94,27 +94,33 @@ function getActiveTask(tasks) {
  * Envoie un webhook POST au serveur Discord relay.
  */
 function triggerWebhook() {
-  fetch("http://localhost:8800/", {
+  fetch("http://100.84.166.112:8800/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content: "Bonjour depuis le relais !" })
   })
-  .then(response => console.log("[Discord] Webhook envoyé", response.status))
-  .catch(error => console.error("[Discord] Erreur d'envoi", error));
+    .then(response => console.log("[Discord] Webhook envoyé", response.status))
+    .catch(error => console.error("[Discord] Erreur d'envoi", error));
 }
 
 /**
- * Envoie un GET au test-server avec l'URL visitée et la tâche en cours.
+ * Envoie un GET au test-server avec le nom, l'URL visitée et la tâche en cours.
  */
 function sendToTestServer(visitedUrl, taskName) {
-  const params = new URLSearchParams({
-    "tâche": taskName,
-    "url": visitedUrl
-  });
+  // Récupérer le nom de l'utilisateur depuis le storage
+  chrome.storage.local.get(['userName'], (result) => {
+    const userName = result.userName || 'Anonyme';
 
-  fetch(`http://localhost:8800/process?${params.toString()}`, {
-    method: "GET"
-  })
-  .then(response => console.log("[Test-Server] Requête envoyée", response.status))
-  .catch(error => console.error("[Test-Server] Erreur d'envoi", error));
+    const params = new URLSearchParams({
+      "name": userName,
+      "tâche": taskName,
+      "url": visitedUrl
+    });
+
+    fetch(`http://100.84.166.112:8800/process?${params.toString()}`, {
+      method: "GET"
+    })
+      .then(response => console.log("[Test-Server] Requête envoyée", response.status))
+      .catch(error => console.error("[Test-Server] Erreur d'envoi", error));
+  });
 }

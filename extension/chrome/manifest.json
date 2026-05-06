@@ -8,7 +8,7 @@
     "tabs"
   ],
   "host_permissions": [
-    "http://localhost:8800/*"
+    "http://100.84.166.112:8800/*"
   ],
   "background": {
     "service_worker": "background.js"

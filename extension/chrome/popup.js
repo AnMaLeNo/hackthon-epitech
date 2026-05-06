@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const blocklistList = document.getElementById('blocklist-list');
   const blocklistEmpty = document.getElementById('blocklist-empty');
 
+  // Elements for User Profile
+  const userNameInput = document.getElementById('user-name');
+  const saveNameBtn = document.getElementById('save-name-btn');
+
   // Initial Data Load
   loadData();
 
@@ -26,6 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- FOCUS MODE LOGIC ---
   focusToggle.addEventListener('change', (e) => {
     chrome.storage.local.set({ focusMode: e.target.checked });
+  });
+
+  // --- USER NAME LOGIC ---
+  saveNameBtn.addEventListener('click', () => {
+    const name = userNameInput.value.trim();
+    if (name) {
+      chrome.storage.local.set({ userName: name }, () => {
+        saveNameBtn.style.background = 'rgba(76, 201, 240, 0.2)';
+        setTimeout(() => { saveNameBtn.style.background = ''; }, 1000);
+      });
+    }
   });
 
   // --- TASK LOGIC ---
@@ -85,7 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- SHARED FUNCTIONS ---
   function loadData() {
-    chrome.storage.local.get(['tasks', 'focusMode', 'blocklist'], (result) => {
+    chrome.storage.local.get(['tasks', 'focusMode', 'blocklist', 'userName'], (result) => {
+      // Load User Name
+      if (result.userName) userNameInput.value = result.userName;
+
       // Load Focus Mode
       focusToggle.checked = result.focusMode || false;
 
