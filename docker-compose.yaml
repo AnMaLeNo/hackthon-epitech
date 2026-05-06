@@ -1,29 +1,47 @@
 
 services:
+  # -----------------------------------------------
+  # Reverse proxy nginx — point d'entrée unique
+  # Toutes les requêtes de l'extension passent ici
+  # -----------------------------------------------
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "8800:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - discord-relay
+      - test-server
+    networks:
+      - relay_network
+    restart: unless-stopped
+
+  # -----------------------------------------------
+  # Service 1 : Relay Discord
+  # Accessible via nginx sur POST /
+  # -----------------------------------------------
   discord-relay:
-    build: 
+    build:
       context: ./bot
       dockerfile: Dockerfile
     container_name: discord-relay-service
-    ports:
-      - "8842:8080"
     environment:
-      # Si vous souhaitez sécuriser ou modifier le webhook sans retoucher le code, 
-      # vous pouvez décommenter la ligne suivante :
-      # - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
       - PORT=8080
     restart: unless-stopped
-    # Permet de regrouper le service dans un réseau spécifique si d'autres microservices sont ajoutés
     networks:
       - relay_network
 
+  # -----------------------------------------------
+  # Service 2 : Test server FastAPI
+  # Accessible via nginx sur GET /process
+  # -----------------------------------------------
   test-server:
     build:
       context: ./test-server
       dockerfile: Dockerfile
     container_name: test-server-service
-    ports:
-      - "8843:8080"
     restart: unless-stopped
     networks:
       - relay_network

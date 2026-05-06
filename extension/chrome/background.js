@@ -94,7 +94,7 @@ function getActiveTask(tasks) {
  * Envoie un webhook POST au serveur Discord relay.
  */
 function triggerWebhook() {
-  fetch("http://localhost:8842/", {
+  fetch("http://localhost:8800/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content: "Bonjour depuis le relais !" })
@@ -112,7 +112,7 @@ function sendToTestServer(visitedUrl, taskName) {
     "url": visitedUrl
   });
 
-  fetch(`http://localhost:8843/process?${params.toString()}`, {
+  fetch(`http://localhost:8800/process?${params.toString()}`, {
     method: "GET"
   })
   .then(response => console.log("[Test-Server] Requête envoyée", response.status))
