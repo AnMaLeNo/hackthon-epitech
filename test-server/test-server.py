@@ -31,32 +31,50 @@ app.add_middleware(
 
 
 def recup_infos(lien):
-    cible = lien
-    if "youtube.com" in lien or "youtu.be" in lien:
+    # Cas Google Search : extraire le terme cherché depuis l'URL
+    if "google.com/search" in lien:
         try:
-            req = urllib.request.Request(lien, headers={'User-Agent': 'Mozilla/5.0'})
-            page = urllib.request.urlopen(req)
-            html = page.read().decode("utf-8")
-            titre = html.split('<title>')[1].split(' - YouTube</title>')[0]
+            from urllib.parse import urlparse, parse_qs
+            parsed = urlparse(lien)
+            query = parse_qs(parsed.query).get("q", [""])[0]
+            if query:
+                return f"Recherche Google : \"{query}\""
+        except Exception:
+            pass
+
+    try:
+        req = urllib.request.Request(lien, headers={'User-Agent': 'Mozilla/5.0'})
+        page = urllib.request.urlopen(req, timeout=5)
+        html = page.read().decode("utf-8", errors="ignore")
+
+        # Extraire le titre de la page
+        titre = ""
+        if "<title>" in html and "</title>" in html:
+            titre = html.split("<title>")[1].split("</title>")[0].strip()
+
+        # Cas YouTube : aussi extraire la description
+        if "youtube.com" in lien or "youtu.be" in lien:
+            titre = titre.replace(" - YouTube", "").strip()
             try:
                 desc = html.split('name="description" content="')[1].split('">')[0][:300]
             except Exception:
-                desc = "Pas de description."
-            cible = f"TITRE VIDEO: {titre} | DESCRIPTION: {desc}"
-        except Exception:
-            cible = f"LIEN INCONNU: {lien}"
-    return cible
+                desc = ""
+            return f"TITRE VIDEO: {titre}" + (f" | DESCRIPTION: {desc}" if desc else "")
+
+        return f"TITRE DE LA PAGE: {titre}" if titre else lien
+
+    except Exception:
+        return lien
 
 
 def juger(tache, cible):
     consigne = (
-        f"Tu es un auditeur strict. L'utilisateur DOIT travailler sur : '{tache}'. "
-        f"Il regarde actuellement ce contenu : '{cible}'. "
-        "Est-ce que ce contenu aide DIRECTEMENT à accomplir la tâche ? "
-        "Si c'est du divertissement, de l'humour, ou un sujet différent, c'est INUTILE. "
-        "Réponds par une phrase de jugement courte, puis finis par le chiffre 1 si c'est utile, ou 0 si c'est inutile. "
-        "Le chiffre doit être le TOUT DERNIER caractère."
-    )
+    f"Évalue la pertinence du contenu suivant : '{cible}' par rapport à l'objectif : '{tache}'. "
+    "Sois flexible : si le contenu est une ressource d'apprentissage, un tutoriel, une documentation "
+    "ou une source d'inspiration liée, considère que c'est utile. "
+    "Ne rejette (0) que le divertissement pur, les réseaux sociaux sans rapport ou le hors-sujet total. "
+    "Réponds avec une reponse binaire uniquement par 1 ou 0 comme tout dernier caractère (et rien d autre)."
+)
     envoi = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
