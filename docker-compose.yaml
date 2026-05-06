@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   discord-relay:
@@ -15,6 +14,17 @@ services:
       - PORT=8080
     restart: unless-stopped
     # Permet de regrouper le service dans un réseau spécifique si d'autres microservices sont ajoutés
+    networks:
+      - relay_network
+
+  test-server:
+    build:
+      context: ./test-server
+      dockerfile: Dockerfile
+    container_name: test-server-service
+    ports:
+      - "8843:8080"
+    restart: unless-stopped
     networks:
       - relay_network
 
