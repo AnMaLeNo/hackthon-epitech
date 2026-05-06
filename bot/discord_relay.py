@@ -7,7 +7,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 # CONFIGURATION
 # ==========================================
 # Remplacez par votre lien Webhook Discord ou utilisez la variable d'environnement
-DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "https://discord.com/api/webhooks/1501539188011696248/H87Os7buRNYVGA-Pdwvo8r0xQN11PPcVqTDutslLlDCF3IFs-CQFHirLbO9xkbJcCfXl")
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "https://discord.com/api/webhooks/1501612567272095804/FoFcGntS2_bdreaYjICqdgY7RM3zE2JxH9lyKmcdjy5LpDR3eUAc0mh8MAc1Xom-cGak")
 PORT = 8080
 
 class RelayHandler(BaseHTTPRequestHandler):
