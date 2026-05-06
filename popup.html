@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Focus Timebox</title>
+  <link rel="stylesheet" href="popup.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Focus Timebox</h1>
+      <p>Gérez vos sessions de travail</p>
+    </header>
+
+    <div class="glass-panel form-container">
+      <form id="task-form">
+        <div class="input-group">
+          <input type="text" id="task-name" placeholder="Ex: Réviser les maths..." required>
+        </div>
+        <div class="time-inputs">
+          <div class="input-group">
+            <label for="start-time">Début</label>
+            <input type="time" id="start-time" required>
+          </div>
+          <div class="input-group">
+            <label for="end-time">Fin</label>
+            <input type="time" id="end-time" required>
+          </div>
+        </div>
+        <button type="submit" class="primary-btn">
+          <span>Ajouter la tâche</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+      </form>
+    </div>
+
+    <div class="tasks-container">
+      <h2>Vos tâches</h2>
+      <ul id="task-list">
+        <!-- Tasks will be injected here via JS -->
+      </ul>
+      <div id="empty-state" class="empty-state">
+        <p>Aucune tâche pour le moment. Ajoutez-en une pour commencer !</p>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
