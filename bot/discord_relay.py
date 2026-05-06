@@ -11,6 +11,24 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "https://discord.com
 PORT = 8080
 
 class RelayHandler(BaseHTTPRequestHandler):
+    def _send_cors_headers(self):
+        """
+        Ajoute les headers CORS à toute réponse pour autoriser les requêtes
+        cross-origin provenant de l'extension Chrome.
+        """
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Content-Length')
+
+    def do_OPTIONS(self):
+        """
+        Répond aux requêtes de pré-vérification (preflight) envoyées par le navigateur
+        avant chaque requête POST cross-origin avec Content-Type: application/json.
+        """
+        self.send_response(204)
+        self._send_cors_headers()
+        self.end_headers()
+
     def do_POST(self):
         """
         Gère les requêtes HTTP POST entrantes.
@@ -19,6 +37,7 @@ class RelayHandler(BaseHTTPRequestHandler):
         content_length_str = self.headers.get('Content-Length')
         if not content_length_str:
             self.send_response(400)
+            self._send_cors_headers()
             self.end_headers()
             self.wfile.write(b"Erreur: Content-Length manquant.")
             return
@@ -47,6 +66,7 @@ class RelayHandler(BaseHTTPRequestHandler):
 
         if not text_content:
             self.send_response(400)
+            self._send_cors_headers()
             self.end_headers()
             self.wfile.write(b"Erreur: Aucun contenu texte trouve.")
             return
@@ -54,6 +74,7 @@ class RelayHandler(BaseHTTPRequestHandler):
         if DISCORD_WEBHOOK_URL == "VOTRE_LIEN_WEBHOOK_ICI":
             print("Attention: Le Webhook Discord n'est pas configure.")
             self.send_response(500)
+            self._send_cors_headers()
             self.end_headers()
             self.wfile.write(b"Erreur: Webhook non configure cote serveur.")
             return
@@ -78,6 +99,7 @@ class RelayHandler(BaseHTTPRequestHandler):
             
             # Réponse confirmant le succès
             self.send_response(200)
+            self._send_cors_headers()
             self.end_headers()
             self.wfile.write(b"Succes: Message relaye sur Discord.")
             print(f"Relayé avec succès: {text_content[:50]}...")
@@ -85,11 +107,13 @@ class RelayHandler(BaseHTTPRequestHandler):
         except urllib.error.HTTPError as e:
             print(f"Erreur HTTP venant de Discord: {e.code} - {e.read().decode()}")
             self.send_response(500)
+            self._send_cors_headers()
             self.end_headers()
             self.wfile.write(b"Erreur lors de l'envoi a Discord.")
         except Exception as e:
             print(f"Erreur interne lors de l'envoi a Discord: {e}")
             self.send_response(500)
+            self._send_cors_headers()
             self.end_headers()
             self.wfile.write(b"Erreur interne du serveur relais.")
 

@@ -74,7 +74,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 function triggerWebhook() {
-  fetch("http://localhost:8080/", {
+  fetch("http://localhost:8842/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

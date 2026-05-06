@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: discord-relay-service
     ports:
-      - "8080:8080"
+      - "8842:8080"
     environment:
       # Si vous souhaitez sécuriser ou modifier le webhook sans retoucher le code, 
       # vous pouvez décommenter la ligne suivante :
